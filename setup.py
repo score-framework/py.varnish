@@ -46,7 +46,7 @@ class DefaultConfigDevelop(develop):
 
 setup(
     name='score.varnish',
-    version='0.1.3',
+    version='0.1.4',
     description='Varnish management for The SCORE Framework',
     long_description=README,
     author='strg.at',
@@ -54,6 +54,8 @@ setup(
     url='http://score-framework.org',
     keywords='score framework web svg icons',
     packages=['score.varnish'],
+    namespace_packages=['score'],
+    zip_safe=False,
     license='LGPL',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -70,7 +72,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     include_package_data=True,
-    zip_safe=False,
     entry_points={
         'score.cli': [
             'varnish = score.varnish.cli:main',
