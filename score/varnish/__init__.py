@@ -163,6 +163,12 @@ class ConfiguredVarnishModule(ConfiguredModule):
                 paths.append(kwargs['path'])
         if 'soft' in kwargs and kwargs['soft'] is not None:
             soft = kwargs['soft']
+        if not self.hosts:
+            # we could return even earlier than this, but even if there are no
+            # hosts configured, the checks of the keyword arguments should be
+            # performed nonetheless.  otherwise we would start getting
+            # unexpected errors as soon as varnish was enabled.
+            return []
         responses = []
         exceptions = []
         pool = multiprocessing.Pool()
