@@ -24,7 +24,25 @@
 # the discretion of STRG.AT GmbH also the competent court, in whose district the
 # Licensee has his registered seat, an establishment or assets.
 
-from ._init import init, ConfiguredVarnishModule
-from ._conf import add_route_caching as cache
+from score.init import parse_time_interval
+import functools
 
-__all__ = ('init', 'ConfiguredVarnishModule', 'cache')
+
+def add_route_caching(self, duration):
+    duration = parse_time_interval(duration)
+
+    def add_caching(route):
+        callback = route.callback
+
+        @functools.wraps(callback)
+        def wrapper(ctx, *args, **kwargs):
+            result = callback(*args, **kwargs)
+            if ctx.http.request.method == 'GET':
+                header = ('Cache-Control', 'v-max-age=%d' % duration)
+                ctx.http.response.headerlist.append(header)
+            return result
+
+        route.callback = wrapper
+        return route
+
+    return add_caching
