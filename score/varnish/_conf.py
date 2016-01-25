@@ -28,7 +28,7 @@ from score.init import parse_time_interval
 import functools
 
 
-def add_route_caching(self, duration):
+def add_route_caching(duration):
     duration = parse_time_interval(duration)
 
     def add_caching(route):
