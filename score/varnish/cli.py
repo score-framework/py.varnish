@@ -25,10 +25,6 @@
 # Licensee has his registered seat, an establishment or assets.
 
 import click
-from score.cli import config
-from score.varnish import ConfiguredVarnishModule
-from score.init import parse_time_interval, parse_host_port, parse_list, \
-    parse_bool, ConfigurationError, extract_conf
 
 
 @click.group()
@@ -50,24 +46,12 @@ def main():
               help='Whether to purge soft.')
 @click.option('-y', '--yes', 'confirm', flag_value=False, default=True,
               help='Answer "yes" to all confirmations.')
-def purge(hosts, domains, paths, soft, timeout, confirm):
+@click.pass_context
+def purge(click_ctx, hosts, domains, paths, soft, timeout, confirm):
     """
     CLI for sending purge requests to varnish hosts.
     """
-    confdict = dict(config()[__package__])
-    if not hosts:
-        try:
-            hosts = parse_list(confdict['hosts'])
-        except KeyError:
-            raise ConfigurationError('Missing configuration for key "hosts".')
-    hosts = [parse_host_port(host) for host in hosts]
-    if timeout is None:
-        timeout = confdict['timeout']
-    timeout = parse_time_interval(timeout)
-    if soft is None:
-        soft = confdict['soft']
-    soft = parse_bool(soft)
-    header_mapping = extract_conf(confdict, 'header.')
+    varnish = click_ctx.obj['conf'].load('varnish')
     if confirm:
         lines = (
             ('HOSTS: ', [':'.join(map(str, host)) for host in hosts]),
@@ -77,9 +61,8 @@ def purge(hosts, domains, paths, soft, timeout, confirm):
         for line in lines:
             print(line[0] + ('\n' + ' '*len(line[0])).join(line[1]))
         click.confirm('Purge %s?' % ('soft' if soft else 'hard'), abort=True)
-    varnish_conf = ConfiguredVarnishModule(hosts, soft, timeout, header_mapping)
-    responses = varnish_conf.purge(domains=list(domains) or None,
-                                   paths=list(paths) or None)
+    responses = varnish.purge(domains=list(domains) or None,
+                              paths=list(paths) or None)
     for response in responses:
         print('Purged %s: %s %s %s' % (
             'soft' if response.request.soft else 'hard',
