@@ -15,7 +15,7 @@ setup(
     author_email='score@strg.at',
     url='http://score-framework.org',
     keywords='score framework web svg icons',
-    packages=['score.varnish'],
+    packages=['score', 'score.varnish'],
     namespace_packages=['score'],
     zip_safe=False,
     license='LGPL',
