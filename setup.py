@@ -40,6 +40,6 @@ setup(
         ]
     },
     install_requires=[
-        'score.init',
+        'score.init >= 0.3',
     ],
 )
