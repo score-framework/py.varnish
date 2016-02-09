@@ -8,7 +8,7 @@ with open(os.path.join(here, 'README.rst')) as f:
 
 setup(
     name='score.varnish',
-    version='0.2',
+    version='0.2.1',
     description='Varnish management for The SCORE Framework',
     long_description=README,
     author='strg.at',
