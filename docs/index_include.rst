@@ -121,25 +121,5 @@ Configuration
 
     .. automethod:: purge
 
-.. autoclass:: PurgeError
-
-Pyramid Integration
-===================
-
-.. module:: score.varnish.pyramid
-
-When using pyramid, it possible to automatically set response headers related
-to varnish caching.
-
-.. todo::
-    Add our varnish VMOD to this python module.
-
-.. autofunction:: init
-
-.. autoclass:: CachingConfiguration
-
-    .. automethod:: add
-
-    .. automethod:: lookup
-
+.. autoclass:: .PurgeError
 
