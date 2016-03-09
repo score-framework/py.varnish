@@ -1,48 +1,36 @@
+# Copyright © 2015 STRG.AT GmbH, Vienna, Austria
+#
+# This file is part of the The SCORE Framework.
+#
+# The SCORE Framework and all its parts are free software: you can redistribute
+# them and/or modify them under the terms of the GNU Lesser General Public
+# License version 3 as published by the Free Software Foundation which is in the
+# file named COPYING.LESSER.txt.
+#
+# The SCORE Framework and all its parts are distributed without any WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. For more details see the GNU Lesser General Public
+# License.
+#
+# If you have not received a copy of the GNU Lesser General Public License see
+# http://www.gnu.org/licenses/.
+#
+# The License-Agreement realised between you as Licensee and STRG.AT GmbH as
+# Licenser including the issue of its valid conclusion and its pre- and
+# post-contractual effects is governed by the laws of Austria. Any disputes
+# concerning this License-Agreement including the issue of its valid conclusion
+# and its pre- and post-contractual effects are exclusively decided by the
+# competent court, in whose district STRG.AT GmbH has its registered seat, at
+# the discretion of STRG.AT GmbH also the competent court, in whose district the
+# Licensee has his registered seat, an establishment or assets.
+
 import os
 from setuptools import setup
-from setuptools.command.install import install
-from setuptools.command.develop import develop
 
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst')) as f:
     README = f.read()
 
-
-def default_config(cmd_sub):
-    """
-    Install command decorator for setting up required default configuration.
-    It modifies the run() method so that it persists an updated configuration.
-    """
-    orig_run = cmd_sub.run
-
-    def mod_run(self):
-        try:
-            from score.cli import config
-        except ImportError:
-            pass
-        else:
-            print('setting up default configuration')
-            from score.varnish import defaults
-            conf = config()
-            for k, v in defaults.items():
-                if k not in conf['score.varnish']:
-                    if isinstance(v, str):
-                        conf['score.varnish'][k] = v
-            conf.persist()
-        orig_run(self)
-
-    cmd_sub.run = mod_run
-    return cmd_sub
-
-
-@default_config
-class DefaultConfigInstall(install):
-    pass
-
-
-@default_config
-class DefaultConfigDevelop(develop):
-    pass
 
 setup(
     name='score.varnish',
@@ -80,8 +68,4 @@ setup(
     install_requires=[
         'score.init',
     ],
-    cmdclass={
-        'install': DefaultConfigInstall,
-        'develop': DefaultConfigDevelop
-    }
 )
