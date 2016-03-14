@@ -121,5 +121,5 @@ Configuration
 
     .. automethod:: purge
 
-.. autoclass:: .PurgeError
+.. autoclass:: PurgeError
 
