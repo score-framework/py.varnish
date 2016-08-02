@@ -49,7 +49,6 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: Web Environment',
-        'Framework :: Pyramid',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU Lesser General '
             'Public License v3 or later (LGPLv3+)',

@@ -38,7 +38,7 @@ def add_route_caching(duration):
         def wrapper(ctx, *args, **kwargs):
             result = callback(ctx, *args, **kwargs)
             if ctx.http.request.method == 'GET':
-                header = ('Cache-Control', 'v-max-age=%d' % duration)
+                header = ('Cache-Control', 's-maxage=%d' % duration)
                 ctx.http.response.headerlist.append(header)
             return result
 
