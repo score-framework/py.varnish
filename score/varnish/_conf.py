@@ -32,7 +32,8 @@ def add_route_caching(duration):
     """
     Adds caching to a :term:`route` by adding the `Cache-Control` header
     `s-maxage` to the response. The header is only added to responses of ``GET``
-    requests.
+    requests. The *duration* may be anything acceptable by
+    :func:`score.init.parse_time_interval`.
 
     See `Section 14.9.3 of RFC 2616`__ for the documentation of the ``s-maxage``
     value.

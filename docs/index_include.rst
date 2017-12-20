@@ -84,7 +84,7 @@ control the operation:
 
 
 Command-Line Interface
-======================
+----------------------
 
 Upon installation, this module registers a :mod:`score.cli` command that can be
 used to invalidate all your Varnish_ hosts at once:
