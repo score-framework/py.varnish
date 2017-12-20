@@ -131,8 +131,8 @@ If you want to bypass the confirmation dialog, just append the *yes* option:
 
 .. _varnish_configuration:
 
-Configuration
-=============
+API
+===
 
 .. autofunction:: init
 
