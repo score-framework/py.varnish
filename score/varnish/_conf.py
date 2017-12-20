@@ -29,6 +29,16 @@ import functools
 
 
 def add_route_caching(duration):
+    """
+    Adds caching to a :term:`route` by adding the `Cache-Control` header
+    `s-maxage` to the response. The header is only added to responses of ``GET``
+    requests.
+
+    See `Section 14.9.3 of RFC 2616`__ for the documentation of the ``s-maxage``
+    value.
+
+    __ https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.3
+    """
     duration = parse_time_interval(duration)
 
     def add_caching(route):

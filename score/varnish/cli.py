@@ -25,6 +25,7 @@
 # Licensee has his registered seat, an establishment or assets.
 
 import click
+import traceback
 
 
 @click.group()
@@ -34,39 +35,44 @@ def main():
 
 @main.command('purge')
 @click.argument('paths', nargs=-1, default=None)
-@click.option('-h', '--host', 'hosts', multiple=True, default=None,
-              help='The varnish host.')
 @click.option('-d', '--domain', 'domains', multiple=True, default=None,
               help='The domain to purge.')
 @click.option('-t', '--timeout', 'timeout', default=None,
               help='The connect timeout for a purge request.')
-@click.option('--hard', 'soft', flag_value=False, default=None,
-              help='Whether to purge hard.')
-@click.option('--soft', 'soft', flag_value=True, default=None,
-              help='Whether to purge soft.')
+@click.option('--type', 'type_', default=None)
 @click.option('-y', '--yes', 'confirm', flag_value=False, default=True,
               help='Answer "yes" to all confirmations.')
 @click.pass_context
-def purge(click_ctx, hosts, domains, paths, soft, timeout, confirm):
+def purge(click_ctx, domains, paths, type_, timeout, confirm):
     """
-    CLI for sending purge requests to varnish hosts.
+    CLI for sending purge requests to varnish servers.
     """
     varnish = click_ctx.obj['conf'].load('varnish')
     if confirm:
         lines = (
-            ('HOSTS: ', [':'.join(map(str, host)) for host in hosts]),
+            ('SERVERS: ', list('%s:%s' % server for server in varnish.servers)),
             ('DOMAINS: ', domains or ['.*']),
             ('PATHS: ', paths or ['.*'])
         )
         for line in lines:
             print(line[0] + ('\n' + ' '*len(line[0])).join(line[1]))
-        click.confirm('Purge %s?' % ('soft' if soft else 'hard'), abort=True)
-    responses = varnish.purge(domains=list(domains) or None,
-                              paths=list(paths) or None)
-    for response in responses:
-        print('Purged %s: %s %s %s' % (
-            'soft' if response.request.soft else 'hard',
-            ':'.join(map(str, response.request.host)),
-            response.request.domain or '.*',
-            response.request.path or '.*'
-        ))
+        prompt = 'Purge?'
+        if type_:
+            prompt = 'Purge %s?' % (type_,)
+        click.confirm(prompt, abort=True)
+    requests = varnish.purge(domains=domains, paths=paths, type=type_,
+                             raise_on_error=False)
+    for request in requests:
+        print('%r - ' % (request,), end='')
+        if request.response and request.response.status != 200:
+            print('ERROR')
+            print('  %d - %s' % (request.response.status,
+                                 request.response.reason))
+        elif request.exception:
+            print('ERROR')
+            traceback.print_exception(
+                type(request.exception),
+                request.exception,
+                request.exception.__traceback__)
+        else:
+            print('SUCCESS')
